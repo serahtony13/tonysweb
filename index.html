@@ -1,53 +1,87 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <script type="text/javascript">
-            var clevertap = { event: [], profile: [], account: [], onUserLogin: [], notifications: [], region: "eu1" };
-            // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
-            clevertap.account.push({ id: "67K-9R8-766Z" });
-            (function () {
-                var wzrk = document.createElement("script");
-                wzrk.type = "text/javascript";
-                wzrk.async = true;
-                wzrk.src = ("https:" == document.location.protocol ? "https://d2r1yp2w7bby2u.cloudfront.net" : "http://static.clevertap.com") + "/js/a.js";
-                var s = document.getElementsByTagName("script")[0];
-                s.parentNode.insertBefore(wzrk, s);
-            })();
-        </script>
-    <script type="text/javascript" src="https://tiiny.host/ad-script.js"></script><script defer data-domain="green-nedi-81.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script></head>
-
-    <body>
-        <h1>You are successfully unsubscribed</h1>
-    </body>
-
+<head>
+    <title>Web SDK HTML Page</title>
+    <script type="text/javascript">
+        // This should be only executed if Website, not if it is webview ?
+        var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
+        // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
+        clevertap.account.push({ "id": "67K-9R8-766Z" });
+        clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
+        clevertap.privacy.push({useIP: true}); //set the flag to true, if the user agrees to share their IP data
+        (function () {
+             var wzrk = document.createElement('script');
+             wzrk.type = 'text/javascript';
+             wzrk.async = true;
+             wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';
+             var s = document.getElementsByTagName('script')[0];
+             s.parentNode.insertBefore(wzrk, s);
+        })();
+        clevertap.event.push("Website launched from SDK script");
+    </script>
+</head>
+<body>
+    <h1> CleverTap Web SDK</h1>
+    <button onclick="pushEvent()">Push Event</button>
+    <br/> <br/>
+    <button onclick="invokeChargedEvent()">Invoke Charged Event</button>
+    <br/> <br/>
+    <button onclick="userLogin_01()">Trigger OnUserLogin Profile#1</button>
+    <br/> <br/>
+    <button onclick="userLogin_02()">Trigger OnUserLogin Profile#2</button>
     <script>
-        //Javascript
-        // Should be true only if your server is url encoding the URL on unsubscribe landing page
-        var isReEncode = false;
-        // on  page load, fetch the email id of the user.
-        window.onload = function () {
-            $WZRK_WR.getEmail(isReEncode);
-            unsubscribe();
-        };
-
-        // will be called after the subscription preferences for the user have been updated
-        function wzrk_email_subscription(status) {
-            //status 0 : unsubscribed, status 1 : subscribed
-            // todo - you can show a success message to the user from here
-            var statusLabel = "subscribed";
-            if (status == 0) {
-                statusLabel = "unsubscribed";
-            }
-            alert("You've been " + statusLabel);
+        function pushEvent() {
+                clevertap.event.push("Product Viewed from Web SDK");
+     
         }
-        // call this function to unsubscribe the user
-        function unsubscribe(isReEncode) {
-            $WZRK_WR.unSubEmail(isReEncode);
+        function invokeChargedEvent(){
+            //An example of recording a CHARGED Event with charge details and items, in the Webview JS
+                clevertap.event.push("Charged", {
+                    "Amount": 300,
+                    "Payment mode": "Credit Card",
+                    "Charged ID": 24052013,
+                    "Items": [
+                        {
+                            "Category": "Books",
+                            "Book name": "The Millionaire next door",
+                            "Quantity": 1
+                        },
+                        {
+                            "Category": "Books",
+                            "Book name": "Achieving inner zen",
+                            "Quantity": 1
+                        },
+                        {
+                            "Category": "Books",
+                            "Book name": "Chuck it, let's do it",
+                            "Quantity": 5
+                        }
+                    ]
+                });
         }
-        // call this function to resubscribe the user
-        function resubscribe(isReEncode) {
-            $WZRK_WR.subEmail(isReEncode);
+        function userLogin_01() {
+            //Calling onUserLogin profile#1
+                clevertap.onUserLogin.push({
+                    "Site": {
+                       "Name": "Jack Montana Web SDK 0311",                      // String
+                       "Identity": "10apr2024_websdk_0311",                  // String or number
+                       "Email": "10apr2024_websdk_0311@clevertapp.com",      // Email address of the user
+                    }
+                });
+                clevertap.event.push("Login from profile#1");                
+        }
+        function userLogin_02() {
+            //Calling onUserLogin profile#2
+                clevertap.onUserLogin.push({
+                    "Site": {
+                       "Name": "Jack Montana Web SDK 0321",                      // String
+                       "Identity": "10apr2024_websdk_0321",                      // String or number
+                       "Email": "10apr2024_websdk_0321@clevertapp.com",          // Email address of the user
+                    }
+                });
+                clevertap.event.push("Login from profile#2");                
         }
     </script>
+</body>
 </html>
