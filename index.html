@@ -33,6 +33,12 @@
     <script>
         function pushEvent() {
                 clevertap.event.push("Product Viewed from Web SDK");
+            clevertap.notifications.push({
+    "titleText":popupTitleText,
+    "bodyText":popupBodyText,
+    "okButtonText":okButtonText,
+    "rejectButtonText":rejectButtonText,
+    "okButtonColor":okButtonColorInHex});
      
         }
         function invokeChargedEvent(){
