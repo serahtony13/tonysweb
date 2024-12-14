@@ -1,94 +1,156 @@
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Web SDK HTML Page</title>
-    <script type="text/javascript">
-        // This should be only executed if Website, not if it is webview ?
-        var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
-        // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
-        clevertap.account.push({ "id": "67K-9R8-766Z" });
-        clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
-        clevertap.privacy.push({useIP: true}); //set the flag to true, if the user agrees to share their IP data
-        (function () {
-             var wzrk = document.createElement('script');
-             wzrk.type = 'text/javascript';
-             wzrk.async = true;
-             wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';
-             var s = document.getElementsByTagName('script')[0];
-             s.parentNode.insertBefore(wzrk, s);
-        })();
-        clevertap.event.push("Website launched from SDK script");
-    </script>
-</head>
-<body>
-    <h1> CleverTap Web SDK</h1>
-    <button onclick="pushEvent()">Push Event</button>
-    <br/> <br/>
-    <button onclick="invokeChargedEvent()">Invoke Charged Event</button>
-    <br/> <br/>
-    <button onclick="userLogin_01()">Trigger OnUserLogin Profile#1</button>
-    <br/> <br/>
-    <button onclick="userLogin_02()">Trigger OnUserLogin Profile#2</button>
-      <script src="notificationPush.js"></script>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.png" />
+    <link rel="stylesheet" href="../src/Styles/Index.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>wim es como quieres</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <script src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js" crossorigin></script>
     <script>
-        function pushEvent() {
-                clevertap.event.push("Product Viewed from Web SDK");
-             clevertap.notifications.push({
-    "titleText":popupTitleText,
-    "bodyText":popupBodyText,
-    "okButtonText":okButtonText,
-    "rejectButtonText":rejectButtonText,
-    "okButtonColor":okButtonColorInHex});
-     
-        }
-        function invokeChargedEvent(){
-            //An example of recording a CHARGED Event with charge details and items, in the Webview JS
-                clevertap.event.push("Charged", {
-                    "Amount": 300,
-                    "Payment mode": "Credit Card",
-                    "Charged ID": 24052013,
-                    "Items": [
-                        {
-                            "Category": "Books",
-                            "Book name": "The Millionaire next door",
-                            "Quantity": 1
-                        },
-                        {
-                            "Category": "Books",
-                            "Book name": "Achieving inner zen",
-                            "Quantity": 1
-                        },
-                        {
-                            "Category": "Books",
-                            "Book name": "Chuck it, let's do it",
-                            "Quantity": 5
-                        }
-                    ]
-                });
-        }
-        function userLogin_01() {
-            //Calling onUserLogin profile#1
-                clevertap.onUserLogin.push({
-                    "Site": {
-                       "Name": "Jack Montana Web SDK 0311",                      // String
-                       "Identity": "10apr2024_websdk_0311",                  // String or number
-                       "Email": "10apr2024_websdk_0311@clevertapp.com",      // Email address of the user
-                    }
-                });
-                clevertap.event.push("Login from profile#1");                
-        }
-        function userLogin_02() {
-            //Calling onUserLogin profile#2
-                clevertap.onUserLogin.push({
-                    "Site": {
-                       "Name": "Jack Montana Web SDK 0321",                      // String
-                       "Identity": "10apr2024_websdk_0321",                      // String or number
-                       "Email": "10apr2024_websdk_0321@clevertapp.com",          // Email address of the user
-                    }
-                });
-                clevertap.event.push("Login from profile#2");                
-        }
+      ! function(e, t, a, n, g) {
+        e[n] = e[n] || [], e[n].push({
+          "gtm.start": (new Date).getTime(),
+          event: "gtm.js"
+        });
+        var m = t.getElementsByTagName(a)[0],
+          r = t.createElement(a);
+        r.async = !0, r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-T5PH9QRX", m.parentNode.insertBefore(r, m)
+      }(window, document, "script", "dataLayer")
     </script>
-</body>
+    <link rel="preconnect" href="https://dev.visualwebsiteoptimizer.com" />
+    <script type="text/javascript" id="vwoCode">
+      window._vwo_code || function() {
+        var e = 910454,
+          t = !1,
+          n = window,
+          i = document,
+          o = i.querySelector("#vwoCode"),
+          r = "_vwo_" + e + "_settings",
+          s = {};
+        try {
+          var a = JSON.parse(localStorage.getItem("_vwo_" + e + "_config"));
+          s = a && "object" == typeof a ? a : {}
+        } catch (e) {}
+        var d = "session" === s.stT ? n.sessionStorage : n.localStorage;
+        code = {
+          nonce: o && o.nonce,
+          use_existing_jquery: function() {
+            return "undefined" != typeof use_existing_jquery ? use_existing_jquery : void 0
+          },
+          library_tolerance: function() {
+            return "undefined" != typeof library_tolerance ? library_tolerance : void 0
+          },
+          settings_tolerance: function() {
+            return s.sT || 2e3
+          },
+          hide_element_style: function() {
+            return "{" + (s.hES || "opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;transition:none !important;") + "}"
+          },
+          hide_element: function() {
+            return performance.getEntriesByName("first-contentful-paint")[0] ? "" : "string" == typeof s.hE ? s.hE : "body"
+          },
+          getVersion: function() {
+            return 2.1
+          },
+          finish: function(n) {
+            if (!t) {
+              t = !0;
+              var o = i.getElementById("_vis_opt_path_hides");
+              o && o.parentNode.removeChild(o), n && ((new Image).src = "https://dev.visualwebsiteoptimizer.com/ee.gif?a=" + e + n)
+            }
+          },
+          finished: function() {
+            return t
+          },
+          addScript: function(e) {
+            var t = i.createElement("script");
+            t.type = "text/javascript", e.src ? t.src = e.src : t.text = e.text, o && t.setAttribute("nonce", o.nonce), i.getElementsByTagName("head")[0].appendChild(t)
+          },
+          load: function(e, t) {
+            var o = this.getSettings(),
+              s = i.createElement("script");
+            if (t = t || {}, o) s.textContent = o, i.getElementsByTagName("head")[0].appendChild(s), n.VWO && !VWO.caE || (d.removeItem(r), this.load(e));
+            else {
+              var a = new XMLHttpRequest;
+              a.open("GET", e, !0), a.withCredentials = !t.dSC, a.responseType = t.responseType || "text", a.onload = function() {
+                if (t.onloadCb) return t.onloadCb(a, e);
+                200 === a.status || 304 === a.status ? _vwo_code.addScript({
+                  text: a.responseText
+                }) : _vwo_code.finish("&e=loading_failure:" + e)
+              }, a.onerror = function() {
+                if (t.onerrorCb) return t.onerrorCb(e);
+                _vwo_code.finish("&e=loading_failure:" + e)
+              }, a.send()
+            }
+          },
+          getSettings: function() {
+            try {
+              var e = d.getItem(r);
+              if (!e) return;
+              return e = JSON.parse(e), Date.now() > e.e ? void d.removeItem(r) : e.s
+            } catch (e) {
+              return
+            }
+          },
+          init: function() {
+            if (!(i.URL.indexOf("__vwo_disable__") > -1)) {
+              var t, s = this.settings_tolerance();
+              if (n._vwo_settings_timer = setTimeout((function() {
+                  _vwo_code.finish(), d.removeItem(r)
+                }), s), "body" !== this.hide_element()) {
+                t = i.createElement("style");
+                var a = this.hide_element(),
+                  c = a ? a + this.hide_element_style() : "",
+                  _ = i.getElementsByTagName("head")[0];
+                t.setAttribute("id", "_vis_opt_path_hides"), o && t.setAttribute("nonce", o.nonce), t.setAttribute("type", "text/css"), t.styleSheet ? t.styleSheet.cssText = c : t.appendChild(i.createTextNode(c)), _.appendChild(t)
+              } else {
+                t = i.getElementsByTagName("head")[0], (c = i.createElement("div")).style.cssText = "z-index: 2147483647 !important;position: fixed !important;left: 0 !important;top: 0 !important;width: 100% !important;height: 100% !important;background: white !important;", c.setAttribute("id", "_vis_opt_path_hides"), c.classList.add("_vis_hide_layer"), t.parentNode.insertBefore(c, t.nextSibling)
+              }
+              var l = window._vis_opt_url || i.URL,
+                p = "https://dev.visualwebsiteoptimizer.com/j.php?a=" + e + "&u=" + encodeURIComponent(l) + "&vn=2.1"; - 1 !== n.location.search.indexOf("_vwo_xhr") ? this.addScript({
+                src: p
+              }) : this.load(p + "&x=true")
+            }
+          }
+        }, n._vwo_code = code, code.init()
+      }()
+    </script>
+    <script defer="defer" src="/static/js/main.653bc1c1.js"></script>
+    <link href="/static/css/main.e6b7695e.css" rel="stylesheet">
+  </head>
+  <body><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5PH9QRX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <div id="root"></div>
+    <script type="text/javascript">
+      var clevertap = {
+        event: [],
+        profile: [],
+        account: [],
+        onUserLogin: [],
+        notifications: [],
+        privacy: []
+      };
+      clevertap.account.push({
+          id: "67K-9R8-766Z"
+        }),
+        function() {
+          var e = document.createElement("script");
+          e.type = "text/javascript", e.async = !0, e.src = "https://d2r1yp2w7bby2u.cloudfront.net/js/clevertap.min.js";
+          var t = document.getElementsByTagName("script")[0];
+          t.parentNode.insertBefore(e, t)
+        }()
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
 </html>
