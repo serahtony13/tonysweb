@@ -88,16 +88,6 @@ div.fadeMe {
 <script>document.getElementById('JSDiv').style.display = "none";</script>
 </div>
 
-<! –– If adblock detected this popup will be displayed ––>
-<div class="overlay" id="overlay"> <div class="popup"> <h2 style="color: #3661ff; text-decoration: bold; text-align: center;"> Please turn off your AdBlocker to unsubscribe successfully!</h2>
-</br>
-</br>
-<p style="color: #4CAF50; text-align: center;"> Some message to your users</p> </br> 
-
-<button class="button"  onClick="window.location.reload();">Refresh Page</button> </div>
-<script>document.getElementById('overlay').style.display = "none";</script>
-</div>
-
 <! –– Unsub card displayed when AdBlock is not detected ––>
     <div class="unsubbox" id="unsubbox">
         <h4 style="text-align: center;">I want to unsubscribe from future emails</h4>
@@ -106,23 +96,7 @@ div.fadeMe {
         <button class="button" style="position: relative;transform: translateX(0.5%);"onclick="unsubscribe()">Unsubscribe me</button><br/><br/>
         <!-- button onclick="rsubscribe()">Resubscribe</button -->
     </div>
-
-<script type="text/javascript">
-$(document).ready(function(){
-    // check the height of the pixel ad
-    if($("#wrapfabtest").height() > 0) {
-        
-    } else {
-        //when adblock is detected, show the popup to pause AdBlock and hide the Unsub card
-        document.getElementById('overlay').style.display = "block";
-        document.getElementById('unsubbox').style.display = "none";
-
-        
-    }
-});
-  </script>
-
-    <script>
+ <script>
         // on  page load, fetch the email id of the user.
         window.onload = function() {
             $WZRK_WR.getEmail();
