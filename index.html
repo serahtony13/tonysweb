@@ -19,7 +19,29 @@
       
       clevertap.enablePersonalization = false; //Enables Personalization
       clevertap.privacy.push({ optOut: false }); //set the flag to true, if the user of the device opts out of sharing their data
-      clevertap.privacy.push({ useIP: false }); //set the flag to true, if the user agrees to share their IP data
+      clevertap.privacy.push({ useIP: true });
+      if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+
+        // Debugging output
+        console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+
+        // Sending location data to CleverTap
+        clevertap.profile.push({
+          "Site": {
+            "Latitude": latitude,
+            "Longitude": longitude
+          }
+        });
+      }, function (error) {
+        console.error("Geolocation error:", error.message);
+      });
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+      //set the flag to true, if the user agrees to share their IP data
       (function () {
         var wzrk = document.createElement("script");
         wzrk.type = "text/javascript";
