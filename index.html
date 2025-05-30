@@ -29,10 +29,7 @@
 
         // Debugging output
         console.log("Latitude: " + latitude + ", Longitude: " + longitude);
-        Clevertap.setLocation(latitude,longitude);
-        Clevertap.sendLocationData(latitude,longitude);
-        
-        CleverTapPlugin.setLocation(latitude, longitude);
+        clevertap.getlocation();
         // Sending location data to CleverTap
         clevertap.profile.push({
           "Site": {
