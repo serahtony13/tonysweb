@@ -24,7 +24,7 @@
       navigator.geolocation.getCurrentPosition(function (position) {
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
-
+     clevertap.getLocation(latitude,longitude);
         // Debugging output
         console.log("Latitude: " + latitude + ", Longitude: " + longitude);
         clevertap.getLocation();
