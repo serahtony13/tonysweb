@@ -36,8 +36,6 @@
     })();
   </script>
 
-  <!-- Styles -->
-
   <style>
     body {
       margin: 0;
@@ -53,38 +51,34 @@
     .App {
       text-align: center;
       background: rgba(255,255,255,0.1);
-      padding: 40px;
+      padding: 30px;
       border-radius: 15px;
       backdrop-filter: blur(10px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 320px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 6px;
+      border: none;
     }
 
     button {
-      padding: 12px 20px;
-      margin: 10px;
+      padding: 10px;
+      margin: 8px 4px;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: 0.3s;
+      font-weight: bold;
     }
 
-    button:hover {
-      transform: scale(1.05);
-    }
-
-    .loginBtn {
-      background: #00c6ff;
-      color: black;
-    }
-
-    .profileBtn {
-      background: #f7971e;
-      color: black;
-    }
+    .loginBtn { background: #00c6ff; }
+    .profileBtn { background: #f7971e; }
 
     #ctid {
-      margin-top: 20px;
+      margin-top: 15px;
       font-weight: bold;
     }
   </style>
@@ -93,9 +87,21 @@
 
 <body>
   <div class="App">
-    <h2>CleverTap Demo Page</h2>
+    <h3>CleverTap Demo</h3>
 
 ```
+<input id="identity" placeholder="Enter Identity (User ID)">
+<input id="email" placeholder="Enter Email">
+<input id="name" placeholder="Enter Name">
+
+<select id="gender">
+  <option value="">Select Gender</option>
+  <option value="M">Male</option>
+  <option value="F">Female</option>
+</select>
+
+<input id="customerType" placeholder="Customer Type (Premium / Free)">
+
 <button class="loginBtn" onclick="App.onLogin()">OnUserLogin</button>
 <button class="profileBtn" onclick="App.pushProfile()">Profile Push</button>
 
@@ -104,37 +110,58 @@
 
   </div>
 
-  <!-- Single Class -->
-
   <script>
     class App {
 
+      static getInputValues() {
+        return {
+          identity: document.getElementById("identity").value,
+          email: document.getElementById("email").value,
+          name: document.getElementById("name").value,
+          gender: document.getElementById("gender").value,
+          customerType: document.getElementById("customerType").value
+        };
+      }
+
       static onLogin() {
-        var email = "testuser@example.com";
+        var data = App.getInputValues();
+
+        if (!data.identity || !data.email) {
+          alert("Identity and Email are required!");
+          return;
+        }
 
         clevertap.onUserLogin.push({
           Site: {
-            Identity: email,
-            Email: email,
-            Name: "Test User"
+            Identity: data.identity,
+            Email: data.email,
+            Name: data.name
           }
         });
 
-        console.log("onUserLogin fired");
+        console.log("onUserLogin:", data);
 
         App.waitForCTID();
       }
 
       static pushProfile() {
+        var data = App.getInputValues();
+
+        if (!data.email) {
+          alert("Email is required for profile push!");
+          return;
+        }
+
         clevertap.profile.push({
           Site: {
-            Email: "testuser@example.com",
-            Phone: "+919999999999",
-            Plan: "Premium"
+            Email: data.email,
+            Name: data.name,
+            Gender: data.gender,
+            CustomerType: data.customerType
           }
         });
 
-        console.log("Profile pushed");
+        console.log("Profile push:", data);
 
         App.waitForCTID();
       }
