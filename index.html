@@ -1,70 +1,120 @@
 <!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unsubscribe Page</title>
-    <script type="text/javascript">
-      var clevertap = {
-        event: [],
-        profile: [],
-        account: [],
-        onUserLogin: [],
-        notifications: [],
-        privacy: [],
-      };
-      clevertap.account.push({ id: "67K-9R8-766Z" });
-      clevertap.privacy.push({ optOut: false });
-      clevertap.privacy.push({ useIP: true });
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleverTap Unsubscribe Page</title>
 
-      (function () {
-        var wzrk = document.createElement("script");
-        wzrk.type = "text/javascript";
-        wzrk.async = true;
-        wzrk.src =
-          ("https:" == document.location.protocol
-            ? "https://d2r1yp2w7bby2u.cloudfront.net"
-            : "http://static.clevertap.com") + "/js/clevertap.min.js";
+  <script type="text/javascript">
+    var clevertap = {
+      event: [],
+      profile: [],
+      account: [],
+      onUserLogin: [],
+      notifications: [],
+      privacy: []
+    };
 
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(wzrk, s);
-      })();
-    </script>
-  </head>
-  <body>
-    <div>
-      <h4>I want to unsubscribe from future emails</h4>
-      <input type="text" id="email" readonly="readonly" />
-      <br /><br />
-      <button onclick="unsubscribe()">Unsubscribe me</button><br /><br />
-    </div>
-    <script>
-      // Set to true only if your server is URL-encoding the unsubscribe URL
-      var isReEncode = false;
+    // 👉 Replace with your CleverTap Account ID
+    clevertap.account.push({ id: "67K-9R8-766Z" });
 
-      // On page load, fetch the email id of the user
-      window.onload = function () {
+    clevertap.privacy.push({ optOut: false });
+    clevertap.privacy.push({ useIP: true });
+
+    // Load CleverTap SDK
+    (function () {
+      var wzrk = document.createElement("script");
+      wzrk.type = "text/javascript";
+      wzrk.async = true;
+      wzrk.src =
+        ("https:" === document.location.protocol
+          ? "https://d2r1yp2w7bby2u.cloudfront.net"
+          : "http://static.clevertap.com") + "/js/clevertap.min.js";
+
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(wzrk, s);
+    })();
+  </script>
+
+</head>
+
+<body style="font-family: Arial; padding: 20px;">
+  <h2>Email Subscription Preferences</h2>
+
+<label>Email:</label><br> <input type="text" id="email" readonly style="width:300px; padding:5px;"><br><br>
+
+<button onclick="unsubscribe()">Unsubscribe</button> <button onclick="resubscribe()">Resubscribe</button>
+
+  <p id="ctid" style="margin-top:20px; font-weight:bold;"></p>
+
+  <script>
+    var isReEncode = false;
+
+    // STEP 1: On page load
+    window.onload = function () {
+      if (window.$WZRK_WR) {
+        // From CleverTap email link
         $WZRK_WR.getEmail(isReEncode);
-      };
-
-      // Called after email has been fetched
-      function wzrk_email_fetched(emailStr) {
-        document.getElementById("email").value = emailStr;
+      } else {
+        // 👉 Local testing fallback
+        console.log("Testing locally - using dummy email");
+        wzrk_email_fetched("test@example.com");
       }
+    };
 
-      // Called after subscription preference is updated
-      function wzrk_email_subscription(status) {
-        var statusLabel = status == 0 ? "unsubscribed" : "subscribed";
-        alert("You've been " + statusLabel);
-      }
+    // STEP 2: Email fetched callback
+    function wzrk_email_fetched(emailStr) {
+      console.log("Email fetched:", emailStr);
 
-      function unsubscribe() {
+      document.getElementById("email").value = emailStr;
+
+      // STEP 3: Identify user
+      clevertap.onUserLogin.push({
+        Site: {
+          Identity: emailStr,
+          Email: emailStr
+        }
+      });
+
+      // STEP 4: Wait and fetch CleverTap ID
+      setTimeout(function () {
+        if (clevertap.getCleverTapID) {
+          var ctId = clevertap.getCleverTapID();
+
+          console.log("CleverTap ID:", ctId);
+
+          document.getElementById("ctid").innerText =
+            "CleverTap ID: " + (ctId || "Not available yet");
+        } else {
+          console.log("CleverTap SDK not ready");
+        }
+      }, 2000);
+    }
+
+    // STEP 5: Subscription callback
+    function wzrk_email_subscription(status) {
+      var message = status == 0 ? "You have been unsubscribed" : "You have been resubscribed";
+      alert(message);
+    }
+
+    // STEP 6: Actions
+    function unsubscribe() {
+      if (window.$WZRK_WR) {
         $WZRK_WR.unSubEmail(isReEncode);
+      } else {
+        alert("Unsubscribe simulated (local test)");
       }
+    }
 
-      function resubscribe() {
+    function resubscribe() {
+      if (window.$WZRK_WR) {
         $WZRK_WR.subEmail(isReEncode);
+      } else {
+        alert("Resubscribe simulated (local test)");
       }
-    </script>
-  </body>
+    }
+  </script>
+
+</body>
 </html>
