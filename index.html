@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,35 +13,11 @@
         notifications: [],
         privacy: [],
       };
-      // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
       clevertap.account.push({ id: "67K-9R8-766Z" });
-      
-      clevertap.enablePersonalization = false; //Enables Personalization
-      clevertap.privacy.push({ optOut: false }); //set the flag to true, if the user of the device opts out of sharing their data
+      clevertap.privacy.push({ optOut: false });
       clevertap.privacy.push({ useIP: true });
-     //set the flag to true, if the user agrees to share their IP data
-      (function () {
-         if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
 
-        // Debugging output
-        console.log("Latitude: " + latitude + ", Longitude: " + longitude);
-        clevertap.getLocation(latitude,longitude);
-        // Sending location data to CleverTap
-        clevertap.profile.push({
-          "Site": {
-            "Latitude": latitude,
-            "Longitude": longitude
-          }
-        });
-      }, function (error) {
-        console.error("Geolocation error:", error.message);
-      });
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
+      (function () {
         var wzrk = document.createElement("script");
         wzrk.type = "text/javascript";
         wzrk.async = true;
@@ -50,6 +25,24 @@
           ("https:" == document.location.protocol
             ? "https://d2r1yp2w7bby2u.cloudfront.net"
             : "http://static.clevertap.com") + "/js/clevertap.min.js";
+
+        // Call getLocation only AFTER the SDK has fully loaded
+        wzrk.onload = function () {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              function (position) {
+                clevertap.getLocation(
+                  position.coords.latitude,
+                  position.coords.longitude
+                );
+              },
+              function (error) {
+                console.error("Geolocation error:", error.message);
+              }
+            );
+          }
+        };
+
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(wzrk, s);
       })();
@@ -63,32 +56,30 @@
       <button onclick="unsubscribe()">Unsubscribe me</button><br /><br />
     </div>
     <script>
-      // Should be true only if your server is url encoding the URL on unsubscribe landing page
+      // Set to true only if your server is URL-encoding the unsubscribe URL
       var isReEncode = false;
-      // on  page load, fetch the email id of the user.
+
+      // On page load, fetch the email id of the user
       window.onload = function () {
         $WZRK_WR.getEmail(isReEncode);
       };
-      // will be called after the email id of the user has been fetched
+
+      // Called after email has been fetched
       function wzrk_email_fetched(emailStr) {
         document.getElementById("email").value = emailStr;
       }
-      // will be called after the subscription preferences for the user have been updated
+
+      // Called after subscription preference is updated
       function wzrk_email_subscription(status) {
-        //status 0 : unsubscribed, status 1 : subscribed
-        // todo - you can show a success message to the user from here
-        var statusLabel = "subscribed";
-        if (status == 0) {
-          statusLabel = "unsubscribed";
-        }
+        var statusLabel = status == 0 ? "unsubscribed" : "subscribed";
         alert("You've been " + statusLabel);
       }
-      // call this function to unsubscribe the user
-      function unsubscribe(isReEncode) {
+
+      function unsubscribe() {
         $WZRK_WR.unSubEmail(isReEncode);
       }
-      // call this function to resubscribe the user
-      function resubscribe(isReEncode) {
+
+      function resubscribe() {
         $WZRK_WR.subEmail(isReEncode);
       }
     </script>
