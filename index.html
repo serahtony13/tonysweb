@@ -1,120 +1,173 @@
-<!DOCTYPE html>
 
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CleverTap Unsubscribe Page</title>
+    <title>Unsubscribe from email</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+//check for internet connection
+window.onload = checkInternetConnection;
+function checkInternetConnection() {
+  var isOnLine = navigator.onLine;
+   if (isOnLine) {
+   } else {
+     alert("Internet connection is lost!");
+   }
+}
+</script>
 
-  <script type="text/javascript">
-    var clevertap = {
-      event: [],
-      profile: [],
-      account: [],
-      onUserLogin: [],
-      notifications: [],
-      privacy: []
-    };
+<style>
+div.fadeMe {
+  background: #fff; 
+  width:      100%;
+  height:     100%; 
+  z-index:    10;
+  top:        0; 
+  left:       0; 
+  position:   fixed; 
+}
+.adBanner {
+    background-color: transparent;
+    height: 1px;
+    width: 1px;
+}
+.button{
+  background-color: #4CAF50; /* Green */ color: white;padding: 15px 32px;  text-align: center; display: inline-block; font-size: 16px;  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); display: block;justify-content: center;
+    
+    margin: 10px auto 0px auto;
+}
+.overlay{top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
+.popup{
+   display: inline-block;
+   justify-content: center;
+   margin-top: 10%; 
+   width: 50%;
+   height:50%;
+   transform: translateX(50%);
+   background-color: white;
+   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
 
-    // 👉 Replace with your CleverTap Account ID
-    clevertap.account.push({ id: "449-W7Z-775Z" });
+}
+.unsubbox{
+   margin-top:10%;width: 30%;transform: translateX(110%);display: flex;flex-direction: column;justify-content: center;align-items: center;text-align: center;padding:10px;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); background: linear-gradient(180deg, #e6ffe6 0%, #fff 51%, #e6ffe6 85%);
+}
 
-    clevertap.privacy.push({ optOut: false });
-    clevertap.privacy.push({ useIP: true });
 
-    // Load CleverTap SDK
-    (function () {
-      var wzrk = document.createElement("script");
-      wzrk.type = "text/javascript";
-      wzrk.async = true;
-      wzrk.src =
-        ("https:" === document.location.protocol
-          ? "https://d2r1yp2w7bby2u.cloudfront.net"
-          : "http://static.clevertap.com") + "/js/clevertap.min.js";
+</style>
+    <!-- your WizRocket JS embed code goes here -->
 
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(wzrk, s);
-    })();
-  </script>
+<script type="text/javascript">
+     var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[]};
+ // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
+ clevertap.account.push({"id": "W44-Z4K-K65Z"});
+ (function () {
+     var wzrk = document.createElement('script');
+     wzrk.type = 'text/javascript';
+     wzrk.async = true;
+     wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/a.js';
+     var s = document.getElementsByTagName('script')[0];
+     s.parentNode.insertBefore(wzrk, s);
+  })();
+</script>
+
 
 </head>
 
-<body style="font-family: Arial; padding: 20px;">
-  <h2>Email Subscription Preferences</h2>
+<body style="background: linear-gradient(55deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 85%);">
+<! –– Check for AdBlocker by displaying a 1x1 pixel ad ––>
+<div id="wrapfabtest">
+    <div class="adBanner">
+    </div>
+</div>
 
-<label>Email:</label><br> <input type="text" id="email" readonly style="width:300px; padding:5px;"><br><br>
+<! –– If JS is disabled this block will be displayed ––>
+<div id="JSDiv" class="fadeMe" style="background-color: white; border: 2; width:100%; height:100%; margin:0; left:0; top:0;"> 
+<h1  style="text-align: center; color: red">Please Enable JavaScript and refresh the page to Unsubscribe Successfully!</h1>
+<script>document.getElementById('JSDiv').style.display = "none";</script>
+</div>
 
-<button onclick="unsubscribe()">Unsubscribe</button> <button onclick="resubscribe()">Resubscribe</button>
+<! –– If adblock detected this popup will be displayed ––>
+<div class="overlay" id="overlay"> <div class="popup"> <h2 style="color: #3661ff; text-decoration: bold; text-align: center;"> Please turn off your AdBlocker to unsubscribe successfully!</h2>
+</br>
+</br>
+<p style="color: #4CAF50; text-align: center;"> Some message to your users</p> </br> 
 
-  <p id="ctid" style="margin-top:20px; font-weight:bold;"></p>
+<button class="button"  onClick="window.location.reload();">Refresh Page</button> </div>
+<script>document.getElementById('overlay').style.display = "none";</script>
+</div>
 
-  <script>
-    var isReEncode = false;
+<! –– Unsub card displayed when AdBlock is not detected ––>
+    <div class="unsubbox" id="unsubbox">
+        <h4 style="text-align: center;">I want to unsubscribe from future emails</h4>
+        <input type="text" id="email" readonly="readonly" style="width: 100%" />
+        <br/><br/>
+        <button class="button" style="position: relative;transform: translateX(0.5%);"onclick="unsubscribe()">Unsubscribe me</button><br/><br/>
+        <!-- button onclick="rsubscribe()">Resubscribe</button -->
+    </div>
 
-    // STEP 1: On page load
-    window.onload = function () {
-      if (window.$WZRK_WR) {
-        // From CleverTap email link
-        $WZRK_WR.getEmail(isReEncode);
-      } else {
-        // 👉 Local testing fallback
-        console.log("Testing locally - using dummy email");
-        wzrk_email_fetched("test@example.com");
-      }
-    };
+<script type="text/javascript">
+$(document).ready(function(){
+    // check the height of the pixel ad
+    if($("#wrapfabtest").height() > 0) {
+        
+    } else {
+        //when adblock is detected, show the popup to pause AdBlock and hide the Unsub card
+        document.getElementById('overlay').style.display = "block";
+        document.getElementById('unsubbox').style.display = "none";
 
-    // STEP 2: Email fetched callback
-    function wzrk_email_fetched(emailStr) {
-      console.log("Email fetched:", emailStr);
-
-      document.getElementById("email").value = emailStr;
-
-      // STEP 3: Identify user
-      clevertap.onUserLogin.push({
-        Site: {
-          Identity: emailStr,
-          Email: emailStr
-        }
-      });
-
-      // STEP 4: Wait and fetch CleverTap ID
-      setTimeout(function () {
-        if (clevertap.getCleverTapID) {
-          var ctId = clevertap.getCleverTapID();
-
-          console.log("CleverTap ID:", ctId);
-
-          document.getElementById("ctid").innerText =
-            "CleverTap ID: " + (ctId || "Not available yet");
-        } else {
-          console.log("CleverTap SDK not ready");
-        }
-      }, 2000);
+        
     }
-
-    // STEP 5: Subscription callback
-    function wzrk_email_subscription(status) {
-      var message = status == 0 ? "You have been unsubscribed" : "You have been resubscribed";
-      alert(message);
-    }
-
-    // STEP 6: Actions
-    function unsubscribe() {
-      if (window.$WZRK_WR) {
-        $WZRK_WR.unSubEmail(isReEncode);
-      } else {
-        alert("Unsubscribe simulated (local test)");
-      }
-    }
-
-    function resubscribe() {
-      if (window.$WZRK_WR) {
-        $WZRK_WR.subEmail(isReEncode);
-      } else {
-        alert("Resubscribe simulated (local test)");
-      }
-    }
+});
   </script>
 
+    <script>
+        // on  page load, fetch the email id of the user.
+        window.onload = function() {
+            $WZRK_WR.getEmail();
+        };
+
+        // will be called after the email id of the user has been fetched
+        function wzrk_email_fetched(emailStr) {
+            document.getElementById("email").value = emailStr;
+        }
+
+        // will be called after the subscription preferences for the user have been updated
+        function wzrk_email_subscription(status) {
+            //status 0 : unsubscribed, status 1 : subscribed
+            // todo - you can show a success message to the user from here
+            var statusLabel = 'subscribed';
+            if (status == 0) {
+                statusLabel = 'unsubscribed';
+            }
+            alert("You've been " + statusLabel);
+
+        }
+
+        // call this function to unsubscribe the user
+        function unsubscribe() {
+            $WZRK_WR.unSubEmail();
+            checkInternetConnection();
+            
+            if (isOnLine) {
+                alert("Unsubscribed successfully!");
+            } 
+            
+
+        }
+
+        // call this function to resubscribe the user
+        function resubscribe() {
+            $WZRK_WR.subEmail();
+        }
+    </script>
+
+
 </body>
+
 </html>
