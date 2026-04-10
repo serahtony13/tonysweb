@@ -26,23 +26,7 @@
             ? "https://d2r1yp2w7bby2u.cloudfront.net"
             : "http://static.clevertap.com") + "/js/clevertap.min.js";
 
-        // Call getLocation only AFTER the SDK has fully loaded
-        wzrk.onload = function () {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              function (position) {
-                clevertap.getLocation(
-                  position.coords.latitude,
-                  position.coords.longitude
-                );
-              },
-              function (error) {
-                console.error("Geolocation error:", error.message);
-              }
-            );
-          }
-        };
-
+        
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(wzrk, s);
       })();
