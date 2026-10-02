@@ -303,13 +303,15 @@
 
 <main id="main">
   <!-- Hero -->
+  <!-- CleverTap Web Native Display (topic "Hero text") replaces the text of the four elements below.
+       The English text is the fallback shown until CleverTap responds. -->
   <div class="wrap hero" id="top">
     <div>
-      <h1>The browser already does this.</h1>
-      <p class="lede">This page is one HTML file. No framework, no build step, no downloads. Every control you can click here is built into the browser you're using right now.</p>
+      <h1 id="hero-title">The browser already does this.</h1>
+      <p class="lede" id="hero-subtitle">This page is one HTML file. No framework, no build step, no downloads. Every control you can click here is built into the browser you're using right now.</p>
       <div class="row">
         <button class="btn" type="button" id="open-dialog">Open a dialog</button>
-        <a class="btn ghost" href="#support" style="text-decoration:none">Check your browser</a>
+        <a class="btn ghost" id="hero-button2" href="#support" style="text-decoration:none">Check your browser</a>
       </div>
     </div>
 
@@ -562,6 +564,45 @@
       status.textContent = 'Couldn\u2019t copy. Copy the address bar instead.';
     }
     setTimeout(() => status.textContent = '', 2500);
+  });
+
+  /* ----- CleverTap Web Native Display ----- */
+  /* Campaign: Key-Value Pair. First key: topic = "Hero text".
+     Other keys: title, subtitle, button1, button2 (optional: lang, e.g. "zh").
+     The English text in the HTML stays as the fallback until CleverTap responds. */
+  function ctCall(method, data) {
+    try {
+      if (window.clevertap && typeof window.clevertap[method] === 'function') window.clevertap[method](data);
+    } catch (e) { console.warn(e); }
+  }
+
+  function renderHeroText(data) {
+    const kv = data.kv || {};
+    const set = (id, value) => {
+      const el = document.getElementById(id);
+      if (el && value) el.textContent = value;   // textContent keeps campaign values as plain text
+    };
+    set('hero-title',    kv.title);
+    set('hero-subtitle', kv.subtitle);
+    set('open-dialog',   kv.button1);
+    set('hero-button2',  kv.button2);
+    if (kv.lang) root.lang = kv.lang;
+
+    ctCall('renderNotificationViewed', data);
+    const hero = document.querySelector('.hero');
+    hero.onclick = (e) => {
+      if (e.target.closest('.btn')) ctCall('renderNotificationClicked', data);
+    };
+  }
+
+  document.addEventListener('CT_web_native_display', function (event) {
+    const data = event.detail;
+    const topic = data && data.kv && data.kv.topic;
+    switch (topic) {
+      case 'Hero text':
+        renderHeroText(data);
+        break;
+    }
   });
 
   applyTokens();
