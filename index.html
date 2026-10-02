@@ -1,15 +1,12 @@
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CleverTap Demo</title>
-
-  <!-- CleverTap SDK -->
-
-  <script type="text/javascript">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web native: what the browser already does</title>
+<meta name="description" content="A single HTML file that uses only built-in browser features: dialog, popover, details, form validation, container queries, oklch colour and more.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234a5fd6'/%3E%3Cpath d='M9 22V10l14 12V10' fill='none' stroke='white' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<script type="text/javascript">
     var clevertap = {
       event: [],
       profile: [],
@@ -19,7 +16,7 @@
       privacy: []
     };
 
-    clevertap.account.push({ id: "W48-Z54-476Z" });
+    clevertap.account.push({ id: "67K-9R8-766Z" });
     clevertap.privacy.push({ optOut: false });
     clevertap.privacy.push({ useIP: true });
 
@@ -36,157 +33,538 @@
       s.parentNode.insertBefore(wzrk, s);
     })();
   </script>
+<script>
+  /* Apply saved theme before first paint to avoid a flash. */
+  try {
+    const t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+  } catch (e) {}
+</script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-    }
+<style>
+  /* ---------- Tokens ---------- */
+  :root {
+    color-scheme: light dark;
+    --hue: 255;
+    --radius: 14px;
 
-    .App {
-      text-align: center;
-      background: rgba(255,255,255,0.1);
-      padding: 30px;
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
-      width: 320px;
-    }
+    --bg:        light-dark(oklch(97.5% .012 var(--hue)), oklch(19% .03 var(--hue)));
+    --surface:   light-dark(oklch(99.5% .005 var(--hue)), oklch(24% .035 var(--hue)));
+    --ink:       light-dark(oklch(24% .05 var(--hue)),   oklch(95% .015 var(--hue)));
+    --muted:     light-dark(oklch(46% .035 var(--hue)),  oklch(76% .03 var(--hue)));
+    --line:      light-dark(oklch(88% .02 var(--hue)),   oklch(34% .035 var(--hue)));
+    --accent:    light-dark(oklch(52% .2 var(--hue)),    oklch(74% .16 var(--hue)));
+    --on-accent: light-dark(oklch(99% 0 0),              oklch(20% .04 var(--hue)));
+    --tint:      color-mix(in oklch, var(--accent) 12%, var(--surface));
+    --danger:    light-dark(oklch(52% .2 25),            oklch(74% .16 25));
 
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin: 6px 0;
-      border-radius: 6px;
-      border: none;
-    }
+    --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark; }
 
-    button {
-      padding: 10px;
-      margin: 8px 4px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+  /* ---------- Base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 1rem/1.6 var(--sans);
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--serif); line-height: 1.12; margin: 0; text-wrap: balance; font-weight: 600; }
+  h1 { font-size: clamp(2.5rem, 7vw + .5rem, 5.25rem); letter-spacing: -.02em; }
+  h2 { font-size: clamp(1.75rem, 3vw + .75rem, 2.5rem); letter-spacing: -.01em; }
+  h3 { font-size: 1.25rem; }
+  p  { margin: 0; text-wrap: pretty; max-width: 62ch; }
+  a  { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .2em; }
+  code { font-family: var(--mono); font-size: .9em; background: var(--tint); padding: .1em .35em; border-radius: 6px; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-    .loginBtn { background: #00c6ff; }
-    .profileBtn { background: #f7971e; }
+  .wrap { width: min(100% - 2.5rem, 70rem); margin-inline: auto; }
+  .muted { color: var(--muted); }
 
-    #ctid {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-  </style>
+  .skip {
+    position: absolute; left: 1rem; top: -4rem; z-index: 20;
+    background: var(--ink); color: var(--bg); padding: .6rem 1rem; border-radius: 8px;
+  }
+  .skip:focus { top: 1rem; }
 
+  /* Scroll progress: pure CSS where supported, hidden otherwise */
+  .progress {
+    position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 30;
+    background: var(--accent); transform: scaleX(0); transform-origin: 0 50%;
+  }
+  @supports (animation-timeline: scroll()) {
+    .progress { animation: grow linear both; animation-timeline: scroll(root); }
+  }
+  @keyframes grow { to { transform: scaleX(1); } }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in oklch, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.5rem; }
+  .brand { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+  nav ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; font-size: .95rem; }
+  nav a { text-decoration: none; padding: .35rem 0; border-bottom: 2px solid transparent; }
+  nav a:hover { border-bottom-color: var(--accent); }
+
+  /* ---------- Buttons & controls ---------- */
+  .btn {
+    font: inherit; font-weight: 600; cursor: pointer;
+    padding: .7rem 1.15rem; border-radius: calc(var(--radius) * .7);
+    border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent);
+    transition: transform .12s ease, background-color .2s;
+  }
+  .btn:hover { background: color-mix(in oklch, var(--accent) 88%, var(--ink)); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--accent); background: var(--tint); }
+  .row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding-block: clamp(3rem, 8vw, 6rem); display: grid; gap: 3rem; grid-template-columns: 1.25fr 1fr; align-items: center; }
+  .hero p.lede { font-size: 1.2rem; color: var(--muted); margin-block: 1.5rem 2rem; }
+
+  .playground {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.5rem; margin: 0; min-width: 0;
+  }
+  .playground legend { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; padding-inline: .5rem; margin-left: -.5rem; }
+  .control { display: grid; gap: .4rem; margin-top: 1.1rem; }
+  .control label { font-weight: 600; font-size: .95rem; display: flex; justify-content: space-between; }
+  .control label span { font-family: var(--mono); font-weight: 400; color: var(--muted); }
+
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: .6rem; border-radius: 99px; background: var(--line); margin: .4rem 0; }
+  input[type="range"]#hue {
+    background: linear-gradient(to right,
+      oklch(65% .2 0), oklch(65% .2 60), oklch(65% .2 120), oklch(65% .2 180),
+      oklch(65% .2 240), oklch(65% .2 300), oklch(65% .2 360));
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    background: var(--surface); border: 3px solid var(--accent); cursor: grab; box-shadow: 0 1px 4px rgb(0 0 0 / .25);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 1.2rem; height: 1.2rem; border-radius: 50%;
+    background: var(--surface); border: 3px solid var(--accent); cursor: grab;
+  }
+
+  select, input[type="email"] {
+    font: inherit; color: var(--ink); background: var(--bg);
+    border: 1.5px solid var(--line); border-radius: calc(var(--radius) * .6);
+    padding: .6rem .8rem; width: 100%;
+  }
+  select:hover, input[type="email"]:hover { border-color: var(--accent); }
+
+  .readout { margin-top: 1.25rem; font-family: var(--mono); font-size: .85rem; color: var(--muted); background: var(--tint); padding: .7rem .9rem; border-radius: calc(var(--radius) * .6); overflow-wrap: anywhere; }
+
+  /* ---------- Sections ---------- */
+  section.block { padding-block: clamp(3rem, 6vw, 5rem); border-top: 1px solid var(--line); }
+  .block > .wrap > header { margin-bottom: 2.5rem; display: grid; gap: .75rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.25rem; }
+  .panel {
+    grid-column: span 6; min-width: 0;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.5rem; display: grid; gap: 1rem; align-content: start;
+  }
+  .panel.w7 { grid-column: span 7; }
+  .panel.w5 { grid-column: span 5; }
+  .panel.w12 { grid-column: span 12; }
+  .panel.flat { background: var(--tint); border-color: transparent; }
+  .panel p { color: var(--muted); }
+
+  /* dialog: animates open and close with no JavaScript animation code */
+  dialog {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface); color: var(--ink);
+    padding: 0; width: min(92vw, 28rem);
+    box-shadow: 0 24px 60px rgb(0 0 0 / .3);
+    opacity: 0; transform: translateY(10px) scale(.98);
+    transition: opacity .22s ease, transform .22s ease, overlay .22s allow-discrete, display .22s allow-discrete;
+  }
+  dialog[open] { opacity: 1; transform: none; }
+  @starting-style { dialog[open] { opacity: 0; transform: translateY(10px) scale(.98); } }
+  dialog::backdrop {
+    background: rgb(10 12 30 / .5); backdrop-filter: blur(4px); opacity: 0;
+    transition: opacity .22s ease, overlay .22s allow-discrete, display .22s allow-discrete;
+  }
+  dialog[open]::backdrop { opacity: 1; }
+  @starting-style { dialog[open]::backdrop { opacity: 0; } }
+  .dialog-body { padding: 1.5rem; display: grid; gap: 1rem; }
+  .dialog-body p { color: var(--muted); }
+
+  /* popover */
+  [popover] {
+    margin: 0; inset: auto; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: calc(var(--radius) * .7); padding: .9rem 1.1rem; max-width: 18rem;
+    box-shadow: 0 10px 30px rgb(0 0 0 / .18);
+    position: fixed; top: 30%; left: 50%; translate: -50% 0;
+  }
+  @supports (anchor-name: --a) {
+    #tip-btn { anchor-name: --tip; }
+    #tip { position-anchor: --tip; top: calc(anchor(bottom) + .5rem); left: anchor(left); translate: 0 0; }
+  }
+
+  /* details */
+  details { border-top: 1px solid var(--line); padding-block: .85rem; }
+  details:last-of-type { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-family: var(--mono); color: var(--accent); transition: rotate .2s; }
+  details[open] summary::after { rotate: 45deg; }
+  details p { margin-top: .6rem; }
+
+  /* form validation, styled with :has() and :user-invalid */
+  .field { display: grid; gap: .4rem; }
+  .field label { font-weight: 600; }
+  .hint { display: none; color: var(--danger); font-size: .9rem; }
+  .field:has(input:user-invalid) .hint { display: block; }
+  input:user-invalid { border-color: var(--danger); }
+  .check { display: flex; gap: .6rem; align-items: start; }
+  .check input { width: 1.2rem; height: 1.2rem; margin-top: .25rem; accent-color: var(--accent); }
+  form:invalid button[type="submit"] { opacity: .55; }
+  output.status { min-height: 1.6em; font-weight: 600; color: var(--accent); }
+
+  /* container query: the card reacts to its own width, not the screen */
+  .resizer {
+    container-type: inline-size; resize: horizontal; overflow: auto;
+    width: 100%; min-width: 13rem; max-width: 100%;
+    border: 1.5px dashed var(--accent); border-radius: calc(var(--radius) * .7); padding: 1rem;
+  }
+  .media { display: grid; gap: 1rem; align-items: center; }
+  .media svg { width: 100%; max-width: 8rem; height: auto; color: var(--accent); }
+  @container (min-width: 30rem) {
+    .media { grid-template-columns: 8rem 1fr; }
+    .media h3 { font-size: 1.5rem; }
+  }
+
+  /* colour mixing */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr)); gap: .75rem; }
+  .swatch { display: grid; gap: .4rem; font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+  .swatch i { display: block; height: 4.5rem; border-radius: calc(var(--radius) * .6); border: 1px solid var(--line); background: color-mix(in oklch, var(--accent) var(--p), var(--surface)); }
+
+  /* support list */
+  .support { list-style: none; padding: 0; margin: 0; columns: 3 15rem; column-gap: 2rem; }
+  .support li { break-inside: avoid; display: flex; justify-content: space-between; gap: 1rem; padding-block: .7rem; border-bottom: 1px solid var(--line); }
+  .support b { font-family: var(--mono); font-weight: 600; font-size: .85rem; }
+  .support li[data-ok="true"] b { color: var(--accent); }
+  .support li[data-ok="false"] b { color: var(--muted); }
+
+  /* ---------- Footer ---------- */
+  footer.site { border-top: 1px solid var(--line); padding-block: 3rem; }
+  .stats { display: flex; flex-wrap: wrap; gap: 2rem 3rem; margin: 0 0 2rem; }
+  .stats div { display: grid; gap: .1rem; }
+  .stats dt { color: var(--muted); font-size: .9rem; order: 2; }
+  .stats dd { margin: 0; font-family: var(--serif); font-size: 2rem; font-weight: 600; }
+
+  /* ---------- Responsive & motion ---------- */
+  @media (max-width: 62rem) {
+    .hero { grid-template-columns: 1fr; }
+    .panel, .panel.w7, .panel.w5 { grid-column: span 12; }
+  }
+  @media (max-width: 34rem) {
+    nav ul { gap: .9rem; font-size: .88rem; }
+    .brand { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  }
+</style>
 </head>
 
 <body>
-  <div class="App">
-    <h3>CleverTap Demo</h3>
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
 
-```
-<input id="identity" placeholder="Enter Identity (User ID)">
-<input id="email" placeholder="Enter Email">
-<input id="name" placeholder="Enter Name">
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top">Web native</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#top">Try it</a></li>
+        <li><a href="#parts">Built-in parts</a></li>
+        <li><a href="#support">Your browser</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
-<select id="gender">
-  <option value="">Select Gender</option>
-  <option value="M">Male</option>
-  <option value="F">Female</option>
-</select>
+<main id="main">
+  <!-- Hero -->
+  <div class="wrap hero" id="top">
+    <div>
+      <h1>The browser already does this.</h1>
+      <p class="lede">This page is one HTML file. No framework, no build step, no downloads. Every control you can click here is built into the browser you're using right now.</p>
+      <div class="row">
+        <button class="btn" type="button" id="open-dialog">Open a dialog</button>
+        <a class="btn ghost" href="#support" style="text-decoration:none">Check your browser</a>
+      </div>
+    </div>
 
-<input id="customerType" placeholder="Customer Type (Premium / Free)">
+    <fieldset class="playground">
+      <legend>Change this page live</legend>
 
-<button class="loginBtn" onclick="App.onLogin()">OnUserLogin</button>
-<button class="profileBtn" onclick="App.pushProfile()">Profile Push</button>
+      <div class="control">
+        <label for="hue">Colour <span id="hue-val">255</span></label>
+        <input type="range" id="hue" min="0" max="360" value="255">
+      </div>
 
-<div id="ctid">CleverTap ID:  </div>
-```
+      <div class="control">
+        <label for="radius">Corner radius <span id="radius-val">14px</span></label>
+        <input type="range" id="radius" min="0" max="32" value="14">
+      </div>
 
+      <div class="control">
+        <label for="theme">Theme</label>
+        <select id="theme">
+          <option value="auto">Match my device</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <p class="readout" id="readout" aria-live="polite">--hue: 255; --radius: 14px;</p>
+    </fieldset>
   </div>
 
-  <script>
-    class App {
+  <!-- Components -->
+  <section class="block" id="parts">
+    <div class="wrap">
+      <header>
+        <h2>Interface parts the browser ships with</h2>
+        <p class="muted">Each of these used to need a library. Now it's a few lines of HTML or CSS, with keyboard support and screen reader roles included.</p>
+      </header>
 
-      static getInputValues() {
-        return {
-          identity: document.getElementById("identity").value,
-          email: document.getElementById("email").value,
-          name: document.getElementById("name").value,
-          gender: document.getElementById("gender").value,
-          customerType: document.getElementById("customerType").value
-        };
-      }
+      <div class="grid">
+        <!-- Dialog + popover -->
+        <div class="panel w7">
+          <h3>Dialog and popover</h3>
+          <p>A <code>&lt;dialog&gt;</code> traps focus, closes with Esc and makes the page behind it inert. A <code>popover</code> opens and dismisses without any script.</p>
+          <div class="row">
+            <button class="btn ghost" type="button" data-open-dialog>Open dialog</button>
+            <button class="btn ghost" type="button" id="tip-btn" popovertarget="tip">Show popover</button>
+          </div>
+          <div id="tip" popover>Click anywhere else, or press Esc, to close this.</div>
+        </div>
 
-      static onLogin() {
-        var data = App.getInputValues();
+        <!-- Details -->
+        <div class="panel w5 flat">
+          <h3>Questions</h3>
+          <div>
+            <details name="faq" open>
+              <summary>Do I need JavaScript?</summary>
+              <p>Popovers and these accordions work with HTML alone. Opening a dialog takes one line of script.</p>
+            </details>
+            <details name="faq">
+              <summary>Will it run on GitHub Pages?</summary>
+              <p>Yes. It's a single static file, so save it as <code>index.html</code> in your repository and turn on Pages.</p>
+            </details>
+            <details name="faq">
+              <summary>Is it accessible?</summary>
+              <p>Native controls come with keyboard handling, focus states and correct roles. This page also respects your dark mode and reduced motion settings.</p>
+            </details>
+          </div>
+        </div>
 
-        if (!data.identity || !data.email) {
-          alert("Identity and Email are required!");
-          return;
-        }
+        <!-- Form -->
+        <div class="panel w5">
+          <h3>Form checks without a library</h3>
+          <p>The browser validates the address and only shows an error after you've typed something wrong.</p>
+          <form id="signup">
+            <div class="field">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" required autocomplete="email" placeholder="name@example.com">
+              <span class="hint" id="email-hint">Enter an address like name@example.com.</span>
+            </div>
+            <p class="check" style="margin-block:1rem">
+              <input type="checkbox" id="agree" required>
+              <label for="agree">Send me the checklist</label>
+            </p>
+            <div class="row">
+              <button class="btn" type="submit">Send checklist</button>
+              <output class="status" for="email agree" id="status"></output>
+            </div>
+          </form>
+        </div>
 
-        clevertap.onUserLogin.push({
-          Site: {
-            Identity: data.identity,
-            Email: data.email,
-            Name: data.name
-          }
-        });
+        <!-- Container query -->
+        <div class="panel w7">
+          <h3>A card that responds to its own width</h3>
+          <p>Drag the bottom-right corner of the dashed box. The layout changes because of a container query, not the screen size.</p>
+          <div class="resizer">
+            <article class="media">
+              <svg viewBox="0 0 120 120" role="img" aria-label="Abstract rings">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="6" opacity=".25"/>
+                <circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" stroke-width="6" opacity=".55"/>
+                <circle cx="60" cy="60" r="16" fill="currentColor"/>
+              </svg>
+              <div>
+                <h3>Resize me</h3>
+                <p>Narrow, the icon sits above the text. Wide, it moves to the side and the heading grows.</p>
+              </div>
+            </article>
+          </div>
+        </div>
 
-        console.log("onUserLogin:", data);
+        <!-- Colour -->
+        <div class="panel w12">
+          <h3>Colour that stays in tune</h3>
+          <p>Every colour on this page comes from one hue value using <code>oklch()</code>. Shades are mixed with <code>color-mix()</code>, so moving the colour slider above updates all of them together.</p>
+          <div class="swatches">
+            <div class="swatch"><i style="--p:100%"></i>100%</div>
+            <div class="swatch"><i style="--p:75%"></i>75%</div>
+            <div class="swatch"><i style="--p:50%"></i>50%</div>
+            <div class="swatch"><i style="--p:30%"></i>30%</div>
+            <div class="swatch"><i style="--p:15%"></i>15%</div>
+            <div class="swatch"><i style="--p:6%"></i>6%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        App.waitForCTID();
-      }
+  <!-- Support -->
+  <section class="block" id="support">
+    <div class="wrap">
+      <header>
+        <h2>What your browser supports right now</h2>
+        <p class="muted">This list is checked live using feature detection, the same way a production site decides whether to use a feature.</p>
+      </header>
+      <ul class="support" id="support-list"></ul>
+      <noscript><p>Turn on JavaScript to run the browser check.</p></noscript>
+    </div>
+  </section>
+</main>
 
-      static pushProfile() {
-        var data = App.getInputValues();
+<footer class="site">
+  <div class="wrap">
+    <dl class="stats">
+      <div><dd id="stat-elements">–</dd><dt>HTML elements on this page</dt></div>
+      <div><dd id="stat-size">–</dd><dt>size of this page's markup</dt></div>
+      <div><dd id="stat-requests">–</dd><dt>extra files loaded</dt></div>
+    </dl>
+    <div class="row">
+      <button class="btn ghost" type="button" id="copy">Copy page link</button>
+      <span id="copy-status" class="muted" role="status"></span>
+    </div>
+  </div>
+</footer>
 
-        if (!data.email) {
-          alert("Email is required for profile push!");
-          return;
-        }
+<!-- Dialog -->
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <form method="dialog" class="dialog-body">
+    <h2 id="dlg-title" style="font-size:1.6rem">This is a native dialog</h2>
+    <p>Focus stays inside it, Esc closes it, and the page behind is locked. The browser handles all of that. Click the backdrop to close it too.</p>
+    <div class="row">
+      <button class="btn" value="ok">Got it</button>
+    </div>
+  </form>
+</dialog>
 
-        clevertap.profile.push({
-          Site: {
-            Email: data.email,
-            Name: data.name,
-            Gender: data.gender,
-            CustomerType: data.customerType
-          }
-        });
+<script>
+  const $ = (s, r = document) => r.querySelector(s);
+  const root = document.documentElement;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        console.log("Profile push:", data);
+  /* ----- Live tuning ----- */
+  const hue = $('#hue'), radius = $('#radius'), theme = $('#theme');
+  function applyTokens() {
+    root.style.setProperty('--hue', hue.value);
+    root.style.setProperty('--radius', radius.value + 'px');
+    $('#hue-val').textContent = hue.value;
+    $('#radius-val').textContent = radius.value + 'px';
+    $('#readout').textContent = `--hue: ${hue.value}; --radius: ${radius.value}px;`;
+  }
+  hue.addEventListener('input', applyTokens);
+  radius.addEventListener('input', applyTokens);
 
-        App.waitForCTID();
-      }
+  function setTheme(value) {
+    const change = () => {
+      if (value === 'auto') root.removeAttribute('data-theme');
+      else root.dataset.theme = value;
+    };
+    if (document.startViewTransition && !reduceMotion) document.startViewTransition(change);
+    else change();
+    try { localStorage.setItem('theme', value); } catch (e) {}
+  }
+  theme.addEventListener('change', () => setTheme(theme.value));
+  try { theme.value = localStorage.getItem('theme') || 'auto'; } catch (e) {}
+  if (!['auto', 'light', 'dark'].includes(theme.value)) theme.value = 'auto';
 
-      static waitForCTID(retries = 10) {
-        var interval = setInterval(function () {
-          if (clevertap.getCleverTapID) {
-            var id = clevertap.getCleverTapID();
+  /* ----- Dialog ----- */
+  const dlg = $('#dlg');
+  document.querySelectorAll('#open-dialog, [data-open-dialog]').forEach(b =>
+    b.addEventListener('click', () => dlg.showModal()));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 
-            if (id) {
-              document.getElementById("ctid").innerText =
-                "CleverTap ID: " + id;
-              console.log("CleverTap ID:", id);
-              clearInterval(interval);
-            }
-          }
+  /* ----- Form ----- */
+  $('#signup').addEventListener('submit', e => {
+    e.preventDefault();
+    $('#status').textContent = 'Checklist on its way to ' + $('#email').value;
+    e.target.reset();
+  });
 
-          if (--retries === 0) {
-            clearInterval(interval);
-          }
-        }, 500);
-      }
+  /* ----- Feature detection ----- */
+  const checks = [
+    ['Dialog element',            () => typeof HTMLDialogElement === 'function'],
+    ['Popover attribute',         () => 'popover' in HTMLElement.prototype],
+    ['Container queries',         () => CSS.supports('container-type: inline-size')],
+    [':has() selector',           () => CSS.supports('selector(:has(*))')],
+    ['oklch() colour',            () => CSS.supports('color: oklch(50% .1 200)')],
+    ['color-mix()',               () => CSS.supports('color: color-mix(in oklch, red, blue)')],
+    ['light-dark()',              () => CSS.supports('color: light-dark(red, blue)')],
+    ['Scroll-driven animation',   () => CSS.supports('animation-timeline: scroll()')],
+    ['Anchor positioning',        () => CSS.supports('anchor-name: --a')],
+    ['View transitions',          () => 'startViewTransition' in document],
+    ['Clipboard API',             () => !!navigator.clipboard],
+    ['Web Share',                 () => !!navigator.share]
+  ];
+  const list = $('#support-list');
+  checks.forEach(([name, test]) => {
+    let ok = false;
+    try { ok = !!test(); } catch (e) {}
+    const li = document.createElement('li');
+    li.dataset.ok = ok;
+    li.innerHTML = '<span></span><b></b>';
+    li.firstChild.textContent = name;
+    li.lastChild.textContent = ok ? 'Supported' : 'Not available';
+    list.append(li);
+  });
+
+  /* ----- Page stats ----- */
+  $('#stat-elements').textContent = document.querySelectorAll('*').length.toLocaleString();
+  const bytes = new Blob([root.outerHTML]).size;
+  $('#stat-size').textContent = (bytes / 1024).toFixed(1) + ' KB';
+  window.addEventListener('load', () => {
+    const files = performance.getEntriesByType('resource').length;
+    $('#stat-requests').textContent = files;
+  });
+
+  /* ----- Copy link ----- */
+  $('#copy').addEventListener('click', async () => {
+    const status = $('#copy-status');
+    try {
+      if (navigator.share) await navigator.share({ title: document.title, url: location.href });
+      else { await navigator.clipboard.writeText(location.href); status.textContent = 'Link copied'; }
+    } catch (e) {
+      status.textContent = 'Couldn\u2019t copy. Copy the address bar instead.';
     }
-  </script>
+    setTimeout(() => status.textContent = '', 2500);
+  });
 
+  applyTokens();
+</script>
 </body>
 </html>
