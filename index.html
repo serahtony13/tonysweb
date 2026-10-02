@@ -293,7 +293,7 @@
     <a class="brand" href="#top">Web native</a>
     <nav aria-label="Main">
       <ul>
-        <li><a href="#top">Try it</a></li>
+        <li><a href="#top" id="nav-try">Try it</a></li>
         <li><a href="#parts">Built-in parts</a></li>
         <li><a href="#support">Your browser</a></li>
       </ul>
@@ -603,6 +603,22 @@
         renderHeroText(data);
         break;
     }
+  });
+
+  /* ----- CleverTap event: "Try it" click ----- */
+  /* Each click raises the event "web Native try" with property language.
+     1st click: English, 2nd: Chinese, 3rd: English, and so on.
+     The counter starts again from English on every page load. */
+  const TRY_EVENT = 'web Native try';           // must match the event name in your CleverTap dashboard
+  const TRY_LANGUAGES = ['English', 'Chinese'];
+  let tryClicks = 0;
+
+  $('#nav-try').addEventListener('click', () => {
+    const language = TRY_LANGUAGES[tryClicks % TRY_LANGUAGES.length];
+    tryClicks++;
+    try {
+      clevertap.event.push(TRY_EVENT, { language: language });
+    } catch (e) { console.warn('CleverTap event failed', e); }
   });
 
   applyTokens();
